@@ -80,9 +80,9 @@ def main():
     coffee = rgb2gray(skimage.data.coffee())
 
     # Marge data
-    data = [camera, astronaut, horse, coffee]
-    data1 = [camera, astronaut, horse, coffee]
-    data2 = [coffee]
+    data = [camera, astronaut, horse]
+    data1 = [camera, astronaut, horse]
+    data2 = [astronaut]
 
     # Preprocessing
     print("Start to data preprocessing...")
@@ -94,20 +94,20 @@ def main():
     model.train_weights(data1)
 
     # Generate testset
-    test = [get_corrupted_input(d, 0.3) for d in data]
+    test = [get_corrupted_input(d, 0.3) for d in data2]
     # test = []
     # for i in range(0, len(data)):
     #     test.append(get_corrupted_input(data[len(data) - i - 1], 0.1))
 
     # 对引入噪声的图片进行预测
-    predicted = model.predict(data2, threshold=0, asyn=False)
+    predicted = model.predict(test, threshold=0, asyn=False)
     print("Show prediction results...")
     # plot(data1, data2, predicted)
     # print("Show network weights matrix...")
     # model.plot_weights()
 
     data1 = [reshape(d) for d in data1]
-    data2 = [reshape(d) for d in data2]
+    data2 = [reshape(d) for d in test]
     predicted = [reshape(d) for d in predicted]
 
     # 绘制图像

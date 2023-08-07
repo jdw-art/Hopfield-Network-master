@@ -29,11 +29,11 @@ def plot(data, test, predicted, figsize=(3, 3)):
             axarr[i, 1].set_title("Input data")
             axarr[i, 2].set_title('Output data')
             
-        axarr[i, 0].imshow(data[i])
+        axarr[i, 0].imshow(data[i], cmap='gray')
         axarr[i, 0].axis('off')
-        axarr[i, 1].imshow(test[i])
+        axarr[i, 1].imshow(test[i], cmap='gray')
         axarr[i, 1].axis('off')
-        axarr[i, 2].imshow(predicted[i])
+        axarr[i, 2].imshow(predicted[i], cmap='gray')
         axarr[i, 2].axis('off')
             
     plt.tight_layout()
@@ -51,6 +51,14 @@ def preprocessing(img):
     flatten = np.reshape(shift, (w*h))
     return flatten
 
+def get_corrupted_input(input, corruption_level):
+    corrupted = np.copy(input)
+    inv = np.random.binomial(n=1, p=corruption_level, size=len(input))
+    for i, v in enumerate(input):
+        if inv[i]:
+            corrupted[i] = -1 * v
+    return corrupted
+
 def main():
     # Load data
     (x_train, y_train), (_, _ )= mnist.load_data()
@@ -66,19 +74,22 @@ def main():
     # Create Hopfield Network Model
     model = network.HopfieldNetwork()
     model.train_weights(data)
+
     
     # Make test datalist
     test = []
     for i in range(3):
         xi = x_train[y_train==i]
         test.append(xi[1])
-    test = [preprocessing(d) for d in test]
+    # test = [preprocessing(d) for d in test]
+    test = [get_corrupted_input(d, 0.3) for d in data]
+    # test = data
     
-    predicted = model.predict(test, threshold=50, asyn=True)
+    predicted = model.predict(test, num_iter=1000, threshold=50, asyn=False)
     print("Show prediction results...")
     plot(data, test, predicted, figsize=(5, 5))
     print("Show network weights matrix...")
-    model.plot_weights()
+    # model.plot_weights()
     
 if __name__ == '__main__':
     main()
