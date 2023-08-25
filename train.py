@@ -43,11 +43,11 @@ def plot(data, test, predicted, figsize=(5, 6)):
             axarr[i, 1].set_title("Input data")
             axarr[i, 2].set_title('Output data')
 
-        axarr[i, 0].imshow(data[i])
+        axarr[i, 0].imshow(data[i], cmap='gray')
         axarr[i, 0].axis('off')
-        axarr[i, 1].imshow(test[i])
+        axarr[i, 1].imshow(test[i], cmap='gray')
         axarr[i, 1].axis('off')
-        axarr[i, 2].imshow(predicted[i])
+        axarr[i, 2].imshow(predicted[i], cmap='gray')
         axarr[i, 2].axis('off')
 
     plt.tight_layout()

@@ -97,10 +97,10 @@ def plot(feature, predicted, tag1, tag2):
 def plot1(feature, predicted, tag1, tag2):
     feature = [reshape(data) for data in feature]
     predicted = [reshape(data) for data in predicted]
-    fig, axs = plt.subplots(2, 4, figsize=(12, 8))
+    fig, axs = plt.subplots(2, 3, figsize=(12, 8))
     fig.suptitle(tag1 + ' and ' + tag2 + ' Images', fontsize=16)
 
-    for i in range(4):
+    for i in range(3):
         # Plot feature images
         axs[0, i].imshow(feature[i], cmap='gray')
         axs[0, i].set_title(tag1 + f' {i}')
@@ -125,11 +125,11 @@ for images, labels in test_loader:
     label = labels[0].item()
     images_per_class[label].append(image)
 
-for i in range(4):
+for i in range(3):
     random_image = random.choice(images_per_class[i])
     test_sets.append(np.array(random_image).reshape(784))
 
-for i in range(4):
+for i in range(3):
     random_image = random.choice(images_per_class[i])
     test_sets1.append(np.array(random_image).reshape(784))
 
@@ -139,15 +139,17 @@ original_feature = [np.where(array == 0, -1, array) for array in original_sets]
 model = HopfieldNetwork()
 model.train_weights(original_feature)
 
-original_predicted = model.predict(original_feature, num_iter=1000, threshold=60, asyn=False)
+original_predicted = model.predict(original_feature, num_iter=1000, threshold=60, asyn=True)
 
 
-# noisy_sets = [salt_pepper_noise(data, 0.3) for data in test_sets1]
+# noisy_sets = [salt_pepper_noise(data, 0.3) for data in test_sets]
 noisy_sets = test_sets1
 noisy_feature = [np.where(array == 0, -1, array) for array in noisy_sets]
 noisy_sets = [binarize_array(data) for data in noisy_feature]
-noisy_predicted = model.predict(noisy_sets, num_iter=1000, threshold=60, asyn=False)
+noisy_predicted = model.predict(noisy_sets, num_iter=1000, threshold=60, asyn=True)
 # plot1(original_sets, original_feature, tag1='Original', tag2='Predicted')
-plot1(original_sets, original_predicted, tag1='Noisy', tag2='Predicted')
+plot1(original_sets, original_predicted, tag1='Noisy', tag2='Original Predicted')
 plot1(noisy_sets, noisy_predicted, tag1='Noisy', tag2='Predicted')
 # model.plot_weights()
+
+# 网络的最大记忆能力为4
